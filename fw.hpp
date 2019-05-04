@@ -5,7 +5,7 @@
 #include <random>
 #include <cmath>
 void
-generate(std::vector< std::vector <float>> &g, float w);
+generate(std::vector< std::vector <float> > &g, float w);
 
 void
 print_matrix(std::vector< std::vector <float> > g);

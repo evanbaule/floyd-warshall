@@ -8,7 +8,7 @@
 @ w = weighted probability of an edge existing
 */
 void
-generate(std::vector< std::vector <float>> &g, float w)
+generate(std::vector< std::vector <float> > &g, float w)
 {
     //prepare random sample
     //probability of an edge existing
@@ -21,12 +21,9 @@ generate(std::vector< std::vector <float>> &g, float w)
 
     for(unsigned int i = 0; i < g.size(); i++)
     {
-        std::cout << "row: " << i << std::endl;
         for(unsigned int j = 0; j < g[i].size(); j++)
         {
-            std::cout << "col: " << j << std::endl;
             float e = d_edge(re_edge);
-            std::cout << "e = " << e << std::endl;
             if(e < w)
                 g[i][j] = 0; //no edge
             else
@@ -55,12 +52,14 @@ main(int argc, char** argv)
     std::cout << ".fw <n_nodes>" << std::endl;
     if( argc == 1 ) exit(EXIT_FAILURE);
 
-    int v = atoi(argv[1]); //|v|  
-    std::vector< std::vector <float>> g (v, std::vector<float>(v));
-    float w = 0.50;
+    int v = atoi(argv[1]); // number of nodes in g
+    std::vector< std::vector <float> > g (v, std::vector<float>(v));
+    float w = 0.50; //@TODO get this from argv?
+
     std::cout << "Matrix construction complete : " << std::endl;
     std::cout << "g = [ " << g.size() << " ]" << " [ " << g[0].size() << " ]" << std::endl;
     print_matrix(g);
+
     std::cout << "Randomizing g : " << std::endl;
     generate(g, w);
     print_matrix(g);
