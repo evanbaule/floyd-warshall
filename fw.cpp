@@ -42,7 +42,12 @@ print_matrix(std::vector< std::vector <float> > g, int precision)
     {
         for(unsigned int j = 0; j < g[i].size(); j++)
         {
-            std::cout << " [ " << std::setprecision(precision) <<  g[i][j] << " ]";
+            if(g[i][j] == 0)
+                std::cout << " [ 0.00 ]";
+            else if(g[i][j] == infinity)
+                std::cout << " [ INFT ]";
+            else
+                std::cout << " [ " << std::setprecision(precision) <<  g[i][j] << " ]";
         }
         std::cout << std::endl;
     }
