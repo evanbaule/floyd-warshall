@@ -8,6 +8,8 @@
 #include <limits>
 
 static float infinity = std::numeric_limits<float>::max();
+static unsigned long e_seed = 923901283 & std::chrono::system_clock::now().time_since_epoch().count();
+static unsigned long w_seed = 212144421 ^ std::chrono::system_clock::now().time_since_epoch().count();
 
 void
 generate(std::vector< std::vector <float> > &g, float w);

@@ -13,10 +13,12 @@ generate(std::vector< std::vector <float> > &g, float w)
     //prepare random sample
     //probability of an edge existing
     std::default_random_engine re_edge;
+    re_edge.seed(e_seed);
     std::uniform_real_distribution<float> d_edge(0.0, 1.0);
 
     //random weight assigned to each edge
     std::default_random_engine re_weight;
+    re_weight.seed(w_seed);
     std::uniform_real_distribution<float> d_weight (-1.0, 1.0); //negative weights?
 
     for(unsigned int i = 0; i < g.size(); i++)
