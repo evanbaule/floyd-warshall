@@ -5,6 +5,9 @@
 #include <random>
 #include <cmath>
 #include <iomanip>
+#include <limits>
+
+static float infinity = std::numeric_limits<float>::max();
 
 void
 generate(std::vector< std::vector <float> > &g, float w);

@@ -17,15 +17,17 @@ generate(std::vector< std::vector <float> > &g, float w)
 
     //random weight assigned to each edge
     std::default_random_engine re_weight;
-    std::uniform_real_distribution<float> d_weight (0.0, 1.0); //negative weights?
+    std::uniform_real_distribution<float> d_weight (-1.0, 1.0); //negative weights?
 
     for(unsigned int i = 0; i < g.size(); i++)
     {
         for(unsigned int j = 0; j < g[i].size(); j++)
         {
             float e = d_edge(re_edge);
-            if(e > w)
-                g[i][j] = 0; //no edge
+            if(i == j)
+                g[i][j] = 0;
+            else if(e > w)
+                g[i][j] = infinity; //no edge
             else
                 g[i][j] = d_weight(re_weight); //random weighted edge between ith & jth nodes
         }
