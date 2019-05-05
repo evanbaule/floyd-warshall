@@ -24,7 +24,7 @@ generate(std::vector< std::vector <float> > &g, float w)
         for(unsigned int j = 0; j < g[i].size(); j++)
         {
             float e = d_edge(re_edge);
-            if(e < w)
+            if(e > w)
                 g[i][j] = 0; //no edge
             else
                 g[i][j] = d_weight(re_weight); //random weighted edge between ith & jth nodes
@@ -34,13 +34,13 @@ generate(std::vector< std::vector <float> > &g, float w)
 
 // prints a semi-formatted matrix to cout
 void
-print_matrix(std::vector< std::vector <float> > g)
+print_matrix(std::vector< std::vector <float> > g, int precision)
 {
     for(unsigned int i = 0; i < g.size(); i++)
     {
         for(unsigned int j = 0; j < g[i].size(); j++)
         {
-            std::cout << " [ " << g[i][j] << " ]";
+            std::cout << " [ " << std::setprecision(precision) <<  g[i][j] << " ]";
         }
         std::cout << std::endl;
     }
@@ -58,10 +58,10 @@ main(int argc, char** argv)
 
     std::cout << "Matrix construction complete : " << std::endl;
     std::cout << "g = [ " << g.size() << " ]" << " [ " << g[0].size() << " ]" << std::endl;
-    print_matrix(g);
+    print_matrix(g, 2);
 
     std::cout << "Randomizing g : " << std::endl;
     generate(g, w);
-    print_matrix(g);
-
+    print_matrix(g, 2);
+    
 }
