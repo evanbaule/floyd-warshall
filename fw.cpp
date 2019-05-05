@@ -55,6 +55,60 @@ print_matrix(std::vector< std::vector <float> > g, int precision)
     }
 }
 
+bool floyd_warshall(std::vector< std::vector <float> > g, std::vector< std::vector<float > > &dist)
+{
+    unsigned int V = g[0].size();
+    unsigned int i, j, k;
+        /* Initialize the solution matrix same as input 
+      graph matrix. Or we can say the initial values  
+      of shortest distances are based on shortest  
+      paths considering no intermediate vertex. */
+    print_matrix(dist, 6);
+    for (i = 0; i < V; i++) 
+        for (j = 0; j < V; j++)
+        {
+            if(g[i][j] == infinity)
+                dist[i][j] = 0;
+            else
+                dist[i][j] = g[i][j];
+        }
+
+    /* Add all vertices one by one to the set of  
+    intermediate vertices. 
+    ---> Before start of a iteration, we have shortest 
+        distances between all pairs of vertices such  
+        that the shortest distances consider only the 
+        vertices in set {0, 1, 2, .. k-1} as intermediate  
+        vertices. 
+    ----> After the end of a iteration, vertex no. k is  
+        added to the set of intermediate vertices and  
+        the set becomes {0, 1, 2, .. k} */
+    for (k = 0; k < V; k++) 
+    { 
+        // Pick all vertices as source one by one 
+        for (i = 0; i < V; i++) 
+        { 
+            // Pick all vertices as destination for the 
+            // above picked source 
+            for (j = 0; j < V; j++) 
+            { 
+                // If vertex k is on the shortest path from 
+                // i to j, then update the value of dist[i][j] 
+                if (dist[i][k] + dist[k][j] < dist[i][j]) 
+                        dist[i][j] = dist[i][k] + dist[k][j]; 
+            } 
+        } 
+    } 
+
+    // If distance of any verex from itself 
+    // becomes negative, then there is a negative 
+    // weight cycle. 
+    for (int i = 0; i < V; i++) 
+        if (dist[i][i] < 0) 
+            return true; 
+    return false;  
+}
+
 int
 main(int argc, char** argv)
 {
@@ -72,5 +126,9 @@ main(int argc, char** argv)
     std::cout << "Randomizing g : " << std::endl;
     generate(g, w);
     print_matrix(g, 2);
-    
+
+    std::vector< std::vector <float> > paths(v, std::vector<float>(v)); // results for fw alg
+    std::cout << "Running fw algo..." << std::endl;
+    if(floyd_warshall(g, paths))
+        print_matrix(paths, 10);
 }
