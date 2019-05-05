@@ -62,8 +62,8 @@ main(int argc, char** argv)
     if( argc < 3 ) exit(EXIT_FAILURE);
 
     int v = atoi(argv[1]); // number of nodes in g
-    std::vector< std::vector <float> > g (v, std::vector<float>(v));
-    float w = atof(argv[2]); //@TODO get this from argv?
+    std::vector< std::vector <float> > g (v, std::vector<float>(v)); // g adj matrix
+    float w = atof(argv[2]); //weighted p of an edge existing
 
     std::cout << "Matrix construction complete : " << std::endl;
     std::cout << "g = [ " << g.size() << " ]" << " [ " << g[0].size() << " ]" << std::endl;
