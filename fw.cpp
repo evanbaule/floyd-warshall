@@ -50,11 +50,11 @@ int
 main(int argc, char** argv)
 {
     std::cout << ".fw <n_nodes>" << std::endl;
-    if( argc == 1 ) exit(EXIT_FAILURE);
+    if( argc < 3 ) exit(EXIT_FAILURE);
 
     int v = atoi(argv[1]); // number of nodes in g
     std::vector< std::vector <float> > g (v, std::vector<float>(v));
-    float w = 0.50; //@TODO get this from argv?
+    float w = atof(argv[2]); //@TODO get this from argv?
 
     std::cout << "Matrix construction complete : " << std::endl;
     std::cout << "g = [ " << g.size() << " ]" << " [ " << g[0].size() << " ]" << std::endl;

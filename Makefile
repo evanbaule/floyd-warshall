@@ -9,4 +9,4 @@ clean:
 	rm -f *.out *.o fw
 
 run: all
-	./fw 10
+	./fw 10 .50
