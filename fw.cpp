@@ -18,23 +18,25 @@ brk(int len)
 @ w = weighted probability of an edge existing
 */
 void
-generate(std::vector< std::vector <float> > &g, float w)
+generate(std::vector< std::vector <int> > &g, int w)
 {
     //prepare random sample
     //probability of an edge existing
     std::default_random_engine re_edge;
     re_edge.seed(e_seed);
-    std::uniform_real_distribution<float> d_edge(0.0, 1.0);
+    std::uniform_int_distribution<int> d_edge(0, 100);
 
     //random weight assigned to each edge
     std::default_random_engine re_weight;
     re_weight.seed(w_seed);
-    std::uniform_real_distribution<float> d_weight (-1.0, 1.0); //negative weights?
+    std::uniform_int_distribution<int> d_weight (1, 10); //negative weights?
 
     for(unsigned int i = 0; i < g.size(); i++)
     {
         for(unsigned int j = 0; j < g[i].size(); j++)
         {
+            // int w = d_weight(re_weight);
+            // g[i][j] = w;
             float e = d_edge(re_edge);
             if(i == j)
                 g[i][j] = 0;
@@ -48,24 +50,24 @@ generate(std::vector< std::vector <float> > &g, float w)
 
 // prints a semi-formatted matrix to cout
 void
-print_matrix(std::vector< std::vector <float> > g, int precision)
+print_matrix(std::vector< std::vector <int> > g)
 {
     for(unsigned int i = 0; i < g.size(); i++)
     {
         for(unsigned int j = 0; j < g[i].size(); j++)
         {
             if(g[i][j] == 0)
-                std::cout << " [ 0.00 ]";
+                std::cout << " [ 0 ]";
             else if(g[i][j] == infinity)
-                std::cout << " [ INFT ]";
+                std::cout << " [INF]";
             else
-                std::cout << " [ " << std::setprecision(precision) <<  g[i][j] << " ]";
+                std::cout << " [ " <<  g[i][j] << " ]";
         }
         std::cout << std::endl;
     }
 }
 
-bool floyd_warshall(std::vector< std::vector <float> > g, std::vector< std::vector<float > > &dist)
+bool floyd_warshall(std::vector< std::vector <int> > g, std::vector< std::vector<int > > &dist)
 {
     unsigned int V = g[0].size();
     unsigned int i, j, k;
@@ -127,22 +129,23 @@ main(int argc, char** argv)
     if( argc < 3 ) exit(EXIT_FAILURE);
 
     int v = atoi(argv[1]); // number of nodes in g
-    std::vector< std::vector <float> > g (v, std::vector<float>(v)); // g adj matrix
-    float w = atof(argv[2]); //weighted p of an edge existing
+    std::vector< std::vector <int> > g (v, std::vector<int>(v));
+    //std::vector< std::vector <float> > g (v, std::vector<float>(v)); // g adj matrix
+    int w = atoi(argv[2]); //weighted p of an edge existing
 
     std::cout << "Matrix construction complete : " << std::endl;
     std::cout << "g = [ " << g.size() << " ]" << " [ " << g[0].size() << " ]" << std::endl;
-    print_matrix(g, 2);
+    print_matrix(g);
 
     std::cout << "Randomizing g : " << std::endl;
     generate(g, w);
-    print_matrix(g, 2);
+    print_matrix(g);
 
     brk(brk_len);
 
-    std::vector< std::vector <float> > paths(v, std::vector<float>(v)); // results for fw alg
-    print_matrix(paths, 2);
+    std::vector< std::vector <int> > paths(v, std::vector<int>(v)); // results for fw alg
+    print_matrix(paths);
     std::cout << "Running fw algo..." << std::endl;
     if(floyd_warshall(g, paths))
-        print_matrix(paths, 10);
+        print_matrix(paths);
 }

@@ -8,7 +8,7 @@
 #include <limits>
 
 
-static float infinity = std::numeric_limits<float>::max();
+static int infinity = 999;
 static unsigned long e_seed = 923901283 & std::chrono::system_clock::now().time_since_epoch().count();
 static unsigned long w_seed = 212144421 ^ std::chrono::system_clock::now().time_since_epoch().count();
 static int brk_len = 120;
@@ -17,10 +17,10 @@ void
 brk(int len);
 
 void
-generate(std::vector< std::vector <float> > &g, float w);
+generate(std::vector< std::vector <int> > &g, int w);
 
 void
-print_matrix(std::vector< std::vector <float> > g, int precision);
+print_matrix(std::vector< std::vector <int> > g);
 
 #endif // !FW_H
 

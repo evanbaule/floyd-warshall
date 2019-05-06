@@ -9,7 +9,7 @@ clean:
 	rm -f *.out *.o fw
 
 run: all
-	./fw 10 .50
+	./fw 10 50
 
 runs: all	
-	./fw 5 .50
+	./fw 5 50
