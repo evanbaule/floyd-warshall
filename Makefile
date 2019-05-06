@@ -10,3 +10,6 @@ clean:
 
 run: all
 	./fw 10 .50
+
+runs: all	
+	./fw 5 .50

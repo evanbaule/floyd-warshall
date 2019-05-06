@@ -3,6 +3,16 @@
 //headers
 #include "fw.hpp"
 
+void
+brk(int len)
+{
+    for(int i = 0; i < len; i++)
+    {
+        std::cout << "-";
+    }
+    std::cout << std::endl;
+}
+
 /*
 @ g = graph adjacency matrix
 @ w = weighted probability of an edge existing
@@ -59,18 +69,19 @@ bool floyd_warshall(std::vector< std::vector <float> > g, std::vector< std::vect
 {
     unsigned int V = g[0].size();
     unsigned int i, j, k;
-        /* Initialize the solution matrix same as input 
-      graph matrix. Or we can say the initial values  
-      of shortest distances are based on shortest  
-      paths considering no intermediate vertex. */
-    print_matrix(dist, 6);
-    for (i = 0; i < V; i++) 
+    /* Initialize the solution matrix same as input 
+    graph matrix. Or we can say the initial values  
+    of shortest distances are based on shortest
+    paths considering no intermediate vertex. */
+    for (i = 0; i < V; i++)
         for (j = 0; j < V; j++)
         {
             if(g[i][j] == infinity)
                 dist[i][j] = 0;
             else
                 dist[i][j] = g[i][j];
+
+            //std::cout << "Updated value: " << dist[i][j] << std::endl;
         }
 
     /* Add all vertices one by one to the set of  
@@ -94,7 +105,7 @@ bool floyd_warshall(std::vector< std::vector <float> > g, std::vector< std::vect
             { 
                 // If vertex k is on the shortest path from 
                 // i to j, then update the value of dist[i][j] 
-                if (dist[i][k] + dist[k][j] < dist[i][j]) 
+                if (dist[i][k] + dist[k][j] < dist[i][j])
                         dist[i][j] = dist[i][k] + dist[k][j]; 
             } 
         } 
@@ -105,8 +116,8 @@ bool floyd_warshall(std::vector< std::vector <float> > g, std::vector< std::vect
     // weight cycle. 
     for (int i = 0; i < V; i++) 
         if (dist[i][i] < 0) 
-            return true; 
-    return false;  
+            return true;
+    return true;  
 }
 
 int
@@ -127,7 +138,10 @@ main(int argc, char** argv)
     generate(g, w);
     print_matrix(g, 2);
 
+    brk(brk_len);
+
     std::vector< std::vector <float> > paths(v, std::vector<float>(v)); // results for fw alg
+    print_matrix(paths, 2);
     std::cout << "Running fw algo..." << std::endl;
     if(floyd_warshall(g, paths))
         print_matrix(paths, 10);
