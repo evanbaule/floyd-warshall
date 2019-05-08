@@ -3,7 +3,7 @@
 
 all: comp_all
 comp_all: fw.cpp
-	g++ fw.cpp -o fw
+	g++ --std=c++17 fw.cpp -o fw
 
 clean:
 	rm -f *.out *.o fw

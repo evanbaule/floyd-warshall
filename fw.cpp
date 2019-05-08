@@ -1,151 +1,168 @@
-//libraries
+// C++ Program to check if there is a negative weight
+// cycle using Floyd Warshall Algorithm
+#include<iostream>
+#include<stdlib.h>
+#include <time.h>
 
-//headers
 #include "fw.hpp"
 
-void
-brk(int len)
+using namespace std;
+
+
+// returns encapsulated results for each test case
+result*
+floyd_warshall(int v, int edgeChance)
 {
-    for(int i = 0; i < len; i++)
+    result* res = new result(); //encapsulated results
+
+    int g[v][v]; //graph adjacency matrix
+    //int dist[v][v]; //holds distance of shortest path between two given nodes i & j for dist[i][j]
+
+    //util/results for path reconstruction
+    int next[v][v];
+    int paths[v][v];
+
+    //randomly generated values
+    int generated;
+    int weight;
+
+    srand(time(NULL));
+    for(int i = 0; i < v; i++)
     {
-        std::cout << "-";
-    }
-    std::cout << std::endl;
-}
-
-/*
-@ g = graph adjacency matrix
-@ w = weighted probability of an edge existing
-*/
-void
-generate(std::vector< std::vector <int> > &g, int w)
-{
-    //prepare random sample
-    //probability of an edge existing
-    std::default_random_engine re_edge;
-    re_edge.seed(e_seed);
-    std::uniform_int_distribution<int> d_edge(0, 100);
-
-    //random weight assigned to each edge
-    std::default_random_engine re_weight;
-    re_weight.seed(w_seed);
-    std::uniform_int_distribution<int> d_weight (1, 10); //negative weights?
-
-    for(unsigned int i = 0; i < g.size(); i++)
-    {
-        for(unsigned int j = 0; j < g[i].size(); j++)
+        for(int j = 0; j < v; j++)
         {
-            // int w = d_weight(re_weight);
-            // g[i][j] = w;
-            float e = d_edge(re_edge);
-            if(i == j)
+            generated = rand() % 99;
+            weight = (rand() % 6) - 1;
+            if (i == j)
+            {
                 g[i][j] = 0;
-            else if(e > w)
-                g[i][j] = infinity; //no edge
-            else
-                g[i][j] = d_weight(re_weight); //random weighted edge between ith & jth nodes
+            }
+            else if ( generated <= edgeChance )
+            {
+                g[i][j] = weight;
+            }
+            else 
+            {
+                g[i][j] = INF;
+            }
+
+            //Path reconstruction initialization
+            paths[i][j] = 0;
         }
     }
-}
 
-// prints a semi-formatted matrix to cout
-void
-print_matrix(std::vector< std::vector <int> > g)
-{
-    for(unsigned int i = 0; i < g.size(); i++)
+    // Print out the original matrix
+    for(int i = 0; i < v; i++)
     {
-        for(unsigned int j = 0; j < g[i].size(); j++)
+        for(int j = 0; j < v; j++)
         {
-            if(g[i][j] == 0)
-                std::cout << " [ 0 ]";
-            else if(g[i][j] == infinity)
-                std::cout << " [INF]";
+            if(g[i][j] < INF - 100)
+            {
+                cout << g[i][j] << ",";
+            }
             else
-                std::cout << " [ " <<  g[i][j] << " ]";
+            {
+                cout << "INF" << ",";
+            }
+        }
+        cout << endl;
+    }
+    std::cout << "------------------------------------------------------" << std::endl;
+
+    // V[k] = node to be considered as intermediary
+    for (int k = 0; k < v; k++)
+    {
+        // V[i] = source node for the given path
+        for (int i = 0; i < v; i++)
+        {
+            // V[j] = destination node for the given path
+            for (int j = 0; j < v; j++)
+            {
+                // If vertex V[k] is on the shortest path from i to j update the value of dist
+                if (g[i][k] + g[k][j] < g[i][j])
+                {
+                    g[i][j] = g[i][k] + g[k][j];
+                    paths[i][j] = k;
+                } 
+            }
+        }
+    }
+
+    //Check for a negative cycle in the resulting matrix
+    //Negative cycles represented by negative path between a vertex and itself
+    res->neg_cycle = false;
+    for (int i = 0; i < v; i++)
+    {
+        if (g[i][i] < 0)
+        {
+            res->neg_cycle = true;
+            std::cout << "||||||INVALID INPUT|||||| :: Negative Cycles Detected !!! ||||||INVALID INPUT|||||| " << std::endl;
+            return res;
+        }
+    }
+
+    // Print out the resulting matrix
+    for(int i = 0; i < v; i++)
+    {
+        for(int j = 0; j < v; j++)
+        {
+            if(g[i][j] < INF - 100)
+            {
+                cout << g[i][j] << ",";
+            }
+            else
+            {
+                cout << "INF" << ",";
+            }
+        }
+        cout << endl;
+    }
+
+    std::cout << "------------------------------------------------------" << std::endl;
+    std::cout << "Printing path matrix: " << std::endl;
+    // Print out the path matrix
+    for(int i = 0; i < v; i++)
+    {
+        for(int j = 0; j < v; j++)
+        {
+            std::cout << "{ " << paths[i][j] << " } ";
         }
         std::cout << std::endl;
     }
-}
 
-bool floyd_warshall(std::vector< std::vector <int> > g, std::vector< std::vector<int > > &dist)
-{
-    unsigned int V = g[0].size();
-    unsigned int i, j, k;
-    /* Initialize the solution matrix same as input 
-    graph matrix. Or we can say the initial values  
-    of shortest distances are based on shortest
-    paths considering no intermediate vertex. */
-    for (i = 0; i < V; i++)
-        for (j = 0; j < V; j++)
-        {
-            if(g[i][j] == infinity)
-                dist[i][j] = 0;
-            else
-                dist[i][j] = g[i][j];
 
-            //std::cout << "Updated value: " << dist[i][j] << std::endl;
-        }
-
-    /* Add all vertices one by one to the set of  
-    intermediate vertices. 
-    ---> Before start of a iteration, we have shortest 
-        distances between all pairs of vertices such  
-        that the shortest distances consider only the 
-        vertices in set {0, 1, 2, .. k-1} as intermediate  
-        vertices. 
-    ----> After the end of a iteration, vertex no. k is  
-        added to the set of intermediate vertices and  
-        the set becomes {0, 1, 2, .. k} */
-    for (k = 0; k < V; k++) 
-    { 
-        // Pick all vertices as source one by one 
-        for (i = 0; i < V; i++) 
-        { 
-            // Pick all vertices as destination for the 
-            // above picked source 
-            for (j = 0; j < V; j++) 
-            { 
-                // If vertex k is on the shortest path from 
-                // i to j, then update the value of dist[i][j] 
-                if (dist[i][k] + dist[k][j] < dist[i][j])
-                        dist[i][j] = dist[i][k] + dist[k][j]; 
-            } 
-        } 
-    } 
-
-    // If distance of any verex from itself 
-    // becomes negative, then there is a negative 
-    // weight cycle. 
-    for (int i = 0; i < V; i++) 
-        if (dist[i][i] < 0) 
-            return true;
-    return true;  
+    //encapsulated results from computation
+    return res;
 }
 
 int
 main(int argc, char** argv)
 {
-    std::cout << ".fw <n_nodes>" << std::endl;
-    if( argc < 3 ) exit(EXIT_FAILURE);
+    int v = 5;
+    int w = 55;
 
-    int v = atoi(argv[1]); // number of nodes in g
-    std::vector< std::vector <int> > g (v, std::vector<int>(v));
-    //std::vector< std::vector <float> > g (v, std::vector<float>(v)); // g adj matrix
-    int w = atoi(argv[2]); //weighted p of an edge existing
+    int num_tests = 10'000;
+    // int num_tests = 10;
 
-    std::cout << "Matrix construction complete : " << std::endl;
-    std::cout << "g = [ " << g.size() << " ]" << " [ " << g[0].size() << " ]" << std::endl;
-    print_matrix(g);
+    std::cout << " hello " << std::endl;
 
-    std::cout << "Randomizing g : " << std::endl;
-    generate(g, w);
-    print_matrix(g);
+    int invalid = 0;
+    result* _res = new result();
 
-    brk(brk_len);
+    // do
+    // {
+    //     _res = floyd_warshall(v, w);
+    // } while (_res->neg_cycle == false);
 
-    std::vector< std::vector <int> > paths(v, std::vector<int>(v)); // results for fw alg
-    print_matrix(paths);
-    std::cout << "Running fw algo..." << std::endl;
-    if(floyd_warshall(g, paths))
-        print_matrix(paths);
+    for(int i = 0; i < num_tests; i++)
+    {
+        _res = floyd_warshall(v, w);
+        if(_res->neg_cycle) invalid++;
+    }
+
+    float perc = (float)invalid / num_tests;
+    std::cout << "Invalid Graphs Generated: " << std::setprecision(3) << perc << std::endl;
+    
+    std::cout << "goodbye " << std::endl;
+
 }
