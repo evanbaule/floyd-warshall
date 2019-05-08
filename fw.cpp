@@ -1,8 +1,9 @@
 // C++ Program to check if there is a negative weight
 // cycle using Floyd Warshall Algorithm
-#include<iostream>
-#include<stdlib.h>
+#include <iostream>
+#include <stdlib.h>
 #include <time.h>
+//#include <omp.h>
 
 #include "fw.hpp"
 
@@ -11,7 +12,7 @@ using namespace std;
 
 // returns encapsulated results for each test case
 result*
-floyd_warshall(int v, int edgeChance)
+floyd_warshall(int v, int edgeChance, int i)
 {
     result* res = new result(); //encapsulated results
 
@@ -19,20 +20,23 @@ floyd_warshall(int v, int edgeChance)
     //int dist[v][v]; //holds distance of shortest path between two given nodes i & j for dist[i][j]
 
     //util/results for path reconstruction
-    int next[v][v];
+    // int next[v][v];
     int paths[v][v];
 
     //randomly generated values
     int generated;
     int weight;
 
-    srand(time(NULL));
+    unsigned long long seed = (i*i) ^ std::chrono::system_clock::now().time_since_epoch().count();
+    srand(seed);
+    #pragma omp parallel for
     for(int i = 0; i < v; i++)
     {
+        #pragma omp parallel for
         for(int j = 0; j < v; j++)
         {
             generated = rand() % 99;
-            weight = (rand() % 6) - 1;
+            weight = (rand() % 8) - 1;
             if (i == j)
             {
                 g[i][j] = 0;
@@ -138,8 +142,8 @@ floyd_warshall(int v, int edgeChance)
 int
 main(int argc, char** argv)
 {
-    int v = 5;
-    int w = 55;
+    int v = 25;
+    int w = 15;
 
     int num_tests = 10'000;
     // int num_tests = 10;
@@ -149,19 +153,16 @@ main(int argc, char** argv)
     int invalid = 0;
     result* _res = new result();
 
-    // do
-    // {
-    //     _res = floyd_warshall(v, w);
-    // } while (_res->neg_cycle == false);
-
     for(int i = 0; i < num_tests; i++)
     {
-        _res = floyd_warshall(v, w);
+        
+        _res = floyd_warshall(v, w, i);
         if(_res->neg_cycle) invalid++;
     }
 
-    float perc = (float)invalid / num_tests;
-    std::cout << "Invalid Graphs Generated: " << std::setprecision(3) << perc << std::endl;
+    float perc = (float)invalid / num_tests; //% of all graphs generated 
+    perc *= 100;
+    std::cout << "Invalid Graphs Generated: " << std::setprecision(3) << perc  << "\%"<< std::endl;
     
     std::cout << "goodbye " << std::endl;
 

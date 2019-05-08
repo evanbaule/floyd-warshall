@@ -19,7 +19,7 @@ static unsigned long e_seed = 923901283 & std::chrono::system_clock::now().time_
 static unsigned long w_seed = 212144421 ^ std::chrono::system_clock::now().time_since_epoch().count();
 
 result*
-floyd_warshall(int v, int w);
+floyd_warshall(int v, int edgeChance, int i);
 
 #endif // !FW_H
 
