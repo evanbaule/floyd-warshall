@@ -29,10 +29,10 @@ floyd_warshall(int v, int edgeChance, int i)
 
     unsigned long long seed = (i*i) ^ std::chrono::system_clock::now().time_since_epoch().count();
     srand(seed);
-    #pragma omp parallel for
+    //#pragma omp parallel for
     for(int i = 0; i < v; i++)
     {
-        #pragma omp parallel for
+        //#pragma omp parallel for
         for(int j = 0; j < v; j++)
         {
             generated = rand() % 99;
@@ -142,8 +142,8 @@ floyd_warshall(int v, int edgeChance, int i)
 int
 main(int argc, char** argv)
 {
-    int v = 25;
-    int w = 15;
+    int v = 10;
+    int w = 10;
 
     int num_tests = 10'000;
     // int num_tests = 10;
@@ -155,8 +155,11 @@ main(int argc, char** argv)
 
     for(int i = 0; i < num_tests; i++)
     {
-        
+        auto start_inner = std::chrono::system_clock::now();
         _res = floyd_warshall(v, w, i);
+        auto end_inner = std::chrono::system_clock::now();
+
+        //keep track of 
         if(_res->neg_cycle) invalid++;
     }
 
