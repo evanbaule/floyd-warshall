@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <time.h>
 //#include <omp.h>
+#include <iomanip>
 
 #include "fw.hpp"
 
@@ -208,75 +209,63 @@ main(int argc, char** argv)
 
     //Generate results for invalid graph generation
     int invalid = 0;
-    int invalid_results_25[4] = {0, 0, 0, 0};
-    int invalid_results_50[4] = {0, 0, 0, 0};
-    int invalid_results_75[4] = {0, 0, 0, 0};
-    int invalid_results_100[4] = {0, 0, 0, 0};
-    result* _res = new result();
+    int invalid_results_25 = 0;
+    int invalid_results_50 = 0;
+    int invalid_results_75 = 0;
+    int invalid_results_100 = 0;
+    //result* _res = new result();
 
-    int density, d;
-    for(int i = 0; i < 3; i++)
+    std::cout << "Graph size: " <<  v << " * " << v << std::endl;
+    int num_tests = 100'000;
+    for(int i = 0; i < num_tests; i++)
     {
-        v = std::pow(10, i);
-        std::cout << "Graph size: " <<  v << std::endl;
-        for(int j = 0; j < 10'000; j++)
-        {
-            if(detect_neg_floyd_warshall(v, 25, j)) invalid_results_25[i]++;
-            if(detect_neg_floyd_warshall(v, 50, j)) invalid_results_50[i]++;
-            if(detect_neg_floyd_warshall(v, 75, j)) invalid_results_75[i]++;
-            if(detect_neg_floyd_warshall(v, 100, j)) invalid_results_100[i]++;
-        }
+        //std::cout << "Test Number: " << j << std::endl;
+        if(detect_neg_floyd_warshall(v, 25, 25*i)) invalid_results_25++;
+        if(detect_neg_floyd_warshall(v, 50, 50*i)) invalid_results_50++;
+        if(detect_neg_floyd_warshall(v, 75, 75*i)) invalid_results_75++;
+        if(detect_neg_floyd_warshall(v, 100, i)) invalid_results_100++;
     }
 
     std::cout << "Results for neg cycle detection: " << std::endl;
 
-    for(int i = 0; i < vexp; i++)
-    {
-        std::cout << invalid_results_25[i];
-        if(i < vexp - 1) std::cout << ", ";
-    }
-    std::cout << std::endl;
+    float perc = ((float) invalid_results_25 / num_tests) * 100;
+    std::cout << "  - .25 Density Graphs: " << std::setprecision(4) << perc << "% generated are invalid." << std::endl;
+
+    perc = ((float) invalid_results_50 / num_tests) * 100;
+    std::cout << "  - .50 Density Graphs: " << std::setprecision(4) << perc << "% generated are invalid." << std::endl;
+
+    perc = ((float) invalid_results_75 / num_tests) * 100;
+    std::cout << "  - .75 Density Graphs: " << std::setprecision(4) << perc << "% generated are invalid." << std::endl;
     
-    for(int i = 0; i < vexp; i++)
-    {
-        std::cout << invalid_results_50[i];
-        if(i < vexp - 1) std::cout << ", ";
-    }
-    std::cout << std::endl;
+    perc = ((float) invalid_results_100 / num_tests) * 100;
+    std::cout << "  - 1.00 Density Graphs: " << std::setprecision(4) << perc << "% generated are invalid." << std::endl;
 
-    for(int i = 0; i < vexp; i++)
-    {
-        std::cout << invalid_results_75[i];
-        if(i < vexp - 1) std::cout << ", ";
-    }
-    std::cout << std::endl;
-
-    for(int i = 0; i < vexp; i++)
-    {
-        std::cout << invalid_results_100[i];
-        if(i < vexp - 1) std::cout << ", ";
-    }
-    std::cout << std::endl;
-
-
-    // Timing stuff
-    // auto start_outer = std::chrono::system_clock::now();
-    // auto end_outer = std::chrono::system_clock::now();
-    // double tdiff_outer = std::chrono::duration<double>(end_outer-start_outer).count();
-    // std::cout << "Total time taken for " << num_tests << " graphs: " << std::setprecision(4) << tdiff_outer << " ns" << std::endl;
-
-    // for(int i = 0; i < num_tests; i++)
-    // {
-    //     _res = floyd_warshall(v, w, i);
-
-    //     //keep track of how many bad graphs we get
-    //     if(_res->neg_cycle) invalid++;
-    // }
+    std::cout << "--------------------------------------------------------------------------" << std::endl;
+    std::cout << "--------------------------------------------------------------------------" << std::endl;
+    std::cout << "--------------------------------------------------------------------------" << std::endl;
+    auto start_outer = std::chrono::system_clock::now();
     
-    // float perc = (float)invalid / num_tests; //% of all graphs generated 
-    // perc *= 100;
-    // std::cout << "Invalid Graphs Generated: " << std::setprecision(3) << perc  << "\%"<< std::endl;
-    
+    for(int i = 0; i < num_tests; i++)
+    {
+        floyd_warshall(v, w, i);
+    }
+
+    auto end_outer = std::chrono::system_clock::now();
+    double tdiff_outer = std::chrono::duration<double>(end_outer-start_outer).count();
+    std::cout << "Total time taken for " << num_tests << " graphs: " << std::setprecision(4) << tdiff_outer << " ns" << std::endl;
+
+    std::cout << "--------------------------------------------------------------------------" << std::endl;
+
+    /*
+    @TODO:
+        Work on minimizing the probability of our dataset containing a shitty graph
+            Maybe no negative weights for the actual timing dataset
+        
+        Write timing code for avg time taken per graph (at 100x100 we should have a decent amt of time difference or something)
+        Make graphs to show data
+    */
+
+
     std::cout << "goodbye " << std::endl;
 
 }
