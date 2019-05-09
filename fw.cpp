@@ -35,7 +35,7 @@ floyd_warshall(int v, int edge_chance, unsigned long long seed, bool p)
         for(int j = 0; j < v; j++)
         {
             generated = rand() % 99;
-            weight = (rand() % 8);
+            weight = (rand() % 10);
             if (i == j)
             {
                 g[i][j] = 0;
@@ -65,11 +65,11 @@ floyd_warshall(int v, int edge_chance, unsigned long long seed, bool p)
             {
                 if(g[i][j] < INF - 100)
                 {
-                    std::cout << "{ " << g[i][j] << " } ";
+                    std::cout << "{ " << g[i][j] << " }\t";
                 }
                 else
                 {
-                    std::cout << "{INF} ";
+                    std::cout << "{ \u221E }\t"; 
                 }
             }
             cout << endl;
@@ -120,11 +120,11 @@ floyd_warshall(int v, int edge_chance, unsigned long long seed, bool p)
             {
                 if(g[i][j] < INF - 100)
                 {
-                    std::cout << "{ " << g[i][j] << " } ";
+                    std::cout << "{ " << g[i][j] << " }\t";
                 }
                 else
                 {
-                    std::cout << "{INF} ";
+                    std::cout << "{ \u221E }\t"; 
                 }
             }
             std::cout << std::endl;
@@ -137,11 +137,10 @@ floyd_warshall(int v, int edge_chance, unsigned long long seed, bool p)
         {
             for(int j = 0; j < v; j++)
             {
-                std::cout << "{ " << paths[i][j] << " } ";
+                std::cout << "{ " << paths[i][j] << " }\t";
             }
             std::cout << std::endl;
         }
-
     }
 
     //encapsulated results from computation
@@ -255,9 +254,14 @@ main(int argc, char** argv)
     // std::cout << "--------------------------------------------------------------------------" << std::endl;
     // auto start_outer = std::chrono::system_clock::now();
     
+    int timing_sample_size = 10'000;
     unsigned long long seed;
-    for(int i = 0; i < 100; i++)
+    result* _res = new result();
+
+    //Simulate with 25% density
+    for(int i = 0; i < timing_sample_size; i++)
     {
+        
         seed = (i*i*i*i) & ((std::chrono::system_clock::now().time_since_epoch().count()));
         if(dev_print)
         {
@@ -268,8 +272,58 @@ main(int argc, char** argv)
         }
 
         //run algorithm
-        floyd_warshall(5, 35, seed, false);
+        floyd_warshall(10, 25, seed, false);
     }
+
+    //Simulate with 50% density
+    for(int i = 0; i < timing_sample_size; i++)
+    {
+        
+        seed = (i*i*i*i) & ((std::chrono::system_clock::now().time_since_epoch().count()));
+        if(dev_print)
+        {
+            std::cout << "------------------------------------------------------" << std::endl;
+            std::cout << "----------------------- i: " << i << " ------------------------" << std::endl;
+            std::cout << "------------------------------------------------------" << std::endl;
+            std::cout << "Random Generator Seed: " << seed << std::endl;
+        }
+
+        //run algorithm
+        floyd_warshall(10, 25, seed, false);
+    }
+    //Simulate with 75% density
+    for(int i = 0; i < timing_sample_size; i++)
+    {
+        
+        seed = (i*i*i*i) & ((std::chrono::system_clock::now().time_since_epoch().count()));
+        if(dev_print)
+        {
+            std::cout << "------------------------------------------------------" << std::endl;
+            std::cout << "----------------------- i: " << i << " ------------------------" << std::endl;
+            std::cout << "------------------------------------------------------" << std::endl;
+            std::cout << "Random Generator Seed: " << seed << std::endl;
+        }
+
+        //run algorithm
+        floyd_warshall(10, 25, seed, false);
+    }
+    //Simulate with 100% density
+    for(int i = 0; i < timing_sample_size; i++)
+    {
+        
+        seed = (i*i*i*i) & ((std::chrono::system_clock::now().time_since_epoch().count()));
+        if(dev_print)
+        {
+            std::cout << "------------------------------------------------------" << std::endl;
+            std::cout << "----------------------- i: " << i << " ------------------------" << std::endl;
+            std::cout << "------------------------------------------------------" << std::endl;
+            std::cout << "Random Generator Seed: " << seed << std::endl;
+        }
+
+        //run algorithm
+        floyd_warshall(10, 25, seed, false);
+    }
+    delete _res;
 
     // auto end_outer = std::chrono::system_clock::now();
     // double tdiff_outer = std::chrono::duration<double>(end_outer-start_outer).count();
@@ -287,14 +341,14 @@ main(int argc, char** argv)
         98039086,
         2710561,
         6948897,
-        659456,
+        659456, //example seed
         2670848
     };
     for(unsigned int i = 0; i < seeds.size(); i++)
     {
         
         std::cout << "------------------------------------------------------" << std::endl;
-        std::cout << "----------------------- i: " << i << " ------------------------" << std::endl;
+        std::cout << "------------------------ i: " << i << " ------------------------" << std::endl;
         std::cout << "------------------------------------------------------" << std::endl;
 
         //try to get as 'random' seed as possible
@@ -304,9 +358,9 @@ main(int argc, char** argv)
         std::cout << "Random Generator Seed: " << seed << std::endl;
 
         //run algorithm
-        floyd_warshall(5, 35, seed, true);
+        floyd_warshall(5, 25, seed, true);
     }
-    std::cout << "------------------------------------------------------" << std::endl;
 
+    std::cout << "------------------------------------------------------" << std::endl;
     std::cout << "goodbye" << std::endl;
 }
