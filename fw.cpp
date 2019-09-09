@@ -208,7 +208,7 @@ detect_neg_floyd_warshall(int v, int edge_chance, int i)
 int
 main(int argc, char** argv)
 {
-    int v = 10;
+    int v = 25;
     int w = 10;
 
     //int num_tests = 1'000;
@@ -255,13 +255,22 @@ main(int argc, char** argv)
     // auto start_outer = std::chrono::system_clock::now();
     
     int timing_sample_size = 10'000;
+    std::vector<int>sample_sizes = {1'000, 10, 5, 3};
     unsigned long long seed;
     result* _res = new result();
+    double tdiff;
+
+    /*
+
+    BEGIN 10x10
+
+    */
 
     //Simulate with 25% density
-    for(int i = 0; i < timing_sample_size; i++)
+    v = 10;
+    std::vector<double> total_times = { 0, 0, 0, 0};
+    for(int i = 0; i < sample_sizes[0]; i++)
     {
-        
         seed = (i*i*i*i) & ((std::chrono::system_clock::now().time_since_epoch().count()));
         if(dev_print)
         {
@@ -272,11 +281,16 @@ main(int argc, char** argv)
         }
 
         //run algorithm
-        floyd_warshall(10, 25, seed, false);
+        auto start_time = std::chrono::system_clock::now();
+        floyd_warshall(v, 25, seed, false);
+        auto end_time = std::chrono::system_clock::now();
+        tdiff = std::chrono::duration_cast<std::chrono::microseconds>(end_time-start_time).count();
+        std::cout << "Test #: " << i << ", " << v << " nodes, " << "25% density, " << std::setprecision(5) << tdiff << " \u03BCs taken. " << std::endl;
+        total_times[0] += tdiff;
     }
 
     //Simulate with 50% density
-    for(int i = 0; i < timing_sample_size; i++)
+    for(int i = 0; i < sample_sizes[0]; i++)
     {
         
         seed = (i*i*i*i) & ((std::chrono::system_clock::now().time_since_epoch().count()));
@@ -289,12 +303,18 @@ main(int argc, char** argv)
         }
 
         //run algorithm
-        floyd_warshall(10, 25, seed, false);
+        auto start_time = std::chrono::system_clock::now();
+        floyd_warshall(v, 50, seed, false);
+        auto end_time = std::chrono::system_clock::now();
+        tdiff = std::chrono::duration_cast<std::chrono::microseconds>(end_time-start_time).count();
+        std::cout << "Test #: " << i << ", " << v << " nodes, " << "50% density, " << std::setprecision(5) << tdiff << " \u03BCs taken. " << std::endl;
+        total_times[1] += tdiff;
     }
+
+    //
     //Simulate with 75% density
-    for(int i = 0; i < timing_sample_size; i++)
+    for(int i = 0; i < sample_sizes[0]; i++)
     {
-        
         seed = (i*i*i*i) & ((std::chrono::system_clock::now().time_since_epoch().count()));
         if(dev_print)
         {
@@ -305,10 +325,70 @@ main(int argc, char** argv)
         }
 
         //run algorithm
-        floyd_warshall(10, 25, seed, false);
+        auto start_time = std::chrono::system_clock::now();
+        floyd_warshall(v, 75, seed, false);
+        auto end_time = std::chrono::system_clock::now();
+        tdiff = std::chrono::duration_cast<std::chrono::microseconds>(end_time-start_time).count();
+
+        std::cout << "Test #: " << i << ", " << v << " nodes, " << "75% density, " << std::setprecision(5) << tdiff << " \u03BCs taken. " << std::endl;
+        total_times[2] += tdiff;
     }
+
+    //
     //Simulate with 100% density
-    for(int i = 0; i < timing_sample_size; i++)
+    for(int i = 0; i < sample_sizes[0]; i++)
+    {
+        seed = (i*i*i*i) & ((std::chrono::system_clock::now().time_since_epoch().count()));
+        if(dev_print)
+        {
+            std::cout << "------------------------------------------------------" << std::endl;
+            std::cout << "----------------------- i: " << i << " ------------------------" << std::endl;
+            std::cout << "------------------------------------------------------" << std::endl;
+            std::cout << "Random Generator Seed: " << seed << std::endl;
+        }
+
+        //run algorithm
+        auto start_time = std::chrono::system_clock::now();
+        floyd_warshall(v, 100, seed, false);
+        auto end_time = std::chrono::system_clock::now();
+        tdiff = std::chrono::duration_cast<std::chrono::microseconds>(end_time-start_time).count();
+
+        std::cout << "Test #: " << i << ", " << v << " nodes, " << "100% density, " << std::setprecision(5) << tdiff << " \u03BCs taken. " << std::endl;
+        total_times[3] += tdiff;
+    }
+
+    /*
+
+    BEGIN 100X100
+
+    */
+
+    //Simulate with 25% density
+    v = 100;
+    std::vector<double> total_times2 = { 0, 0, 0, 0}; //100x100
+    for(int i = 0; i < sample_sizes[1]; i++)
+    {
+        seed = (i*i*i*i) & ((std::chrono::system_clock::now().time_since_epoch().count()));
+        if(dev_print)
+        {
+            std::cout << "------------------------------------------------------" << std::endl;
+            std::cout << "----------------------- i: " << i << " ------------------------" << std::endl;
+            std::cout << "------------------------------------------------------" << std::endl;
+            std::cout << "Random Generator Seed: " << seed << std::endl;
+        }
+
+        //run algorithm
+        auto start_time = std::chrono::system_clock::now();
+        floyd_warshall(v, 25, seed, false);
+        auto end_time = std::chrono::system_clock::now();
+        tdiff = std::chrono::duration_cast<std::chrono::microseconds>(end_time-start_time).count();
+
+        std::cout << "Test #: " << i << ", " << v << " nodes, " << "25% density, " << std::setprecision(5) << tdiff << " \u03BCs taken. " << std::endl;
+        total_times2[0] += tdiff;
+    }
+
+    //Simulate with 50% density
+    for(int i = 0; i < sample_sizes[1]; i++)
     {
         
         seed = (i*i*i*i) & ((std::chrono::system_clock::now().time_since_epoch().count()));
@@ -321,46 +401,219 @@ main(int argc, char** argv)
         }
 
         //run algorithm
-        floyd_warshall(10, 25, seed, false);
+        auto start_time = std::chrono::system_clock::now();
+        floyd_warshall(v, 50, seed, false);
+        auto end_time = std::chrono::system_clock::now();
+        tdiff = std::chrono::duration_cast<std::chrono::microseconds>(end_time-start_time).count();
+
+        std::cout << "Test #: " << i << ", " << v << " nodes, " << "50% density, " << std::setprecision(5) << tdiff << " \u03BCs taken. " << std::endl;
+        total_times2[1] += tdiff;
     }
+
+    //
+    //Simulate with 75% density
+    for(int i = 0; i < sample_sizes[1]; i++)
+    {
+        seed = (i*i*i*i) & ((std::chrono::system_clock::now().time_since_epoch().count()));
+        if(dev_print)
+        {
+            std::cout << "------------------------------------------------------" << std::endl;
+            std::cout << "----------------------- i: " << i << " ------------------------" << std::endl;
+            std::cout << "------------------------------------------------------" << std::endl;
+            std::cout << "Random Generator Seed: " << seed << std::endl;
+        }
+
+        //run algorithm
+        auto start_time = std::chrono::system_clock::now();
+        floyd_warshall(v, 75, seed, false);
+        auto end_time = std::chrono::system_clock::now();
+        tdiff = std::chrono::duration_cast<std::chrono::microseconds>(end_time-start_time).count();
+
+        std::cout << "Test #: " << i << ", " << v << " nodes, " << "75% density, " << std::setprecision(5) << tdiff << " \u03BCs taken. " << std::endl;
+        total_times2[2] += tdiff;
+    }
+
+    //
+    //Simulate with 100% density
+    for(int i = 0; i < sample_sizes[1]; i++)
+    {
+        seed = (i*i*i*i) & ((std::chrono::system_clock::now().time_since_epoch().count()));
+        if(dev_print)
+        {
+            std::cout << "------------------------------------------------------" << std::endl;
+            std::cout << "----------------------- i: " << i << " ------------------------" << std::endl;
+            std::cout << "------------------------------------------------------" << std::endl;
+            std::cout << "Random Generator Seed: " << seed << std::endl;
+        }
+
+        //run algorithm
+        auto start_time = std::chrono::system_clock::now();
+        floyd_warshall(v, 100, seed, false);
+        auto end_time = std::chrono::system_clock::now();
+        tdiff = std::chrono::duration_cast<std::chrono::microseconds>(end_time-start_time).count();
+
+        std::cout << "Test #: " << i << ", " << v << " nodes, " << "100% density, " << std::setprecision(5) << tdiff << " \u03BCs\t taken. " << std::endl;
+        total_times2[3] += tdiff;
+    }
+
+    /*
+
+    BEGIN 1000X1000
+
+    */
+
+    //
+    //Simulate with 25% density
+    v = 1000;
+    std::vector<double> total_times3 = { 0, 0, 0, 0}; //100x100
+    for(int i = 0; i < sample_sizes[2]; i++)
+    {
+        seed = (i*i*i*i) & ((std::chrono::system_clock::now().time_since_epoch().count()));
+        if(dev_print)
+        {
+            std::cout << "------------------------------------------------------" << std::endl;
+            std::cout << "----------------------- i: " << i << " ------------------------" << std::endl;
+            std::cout << "------------------------------------------------------" << std::endl;
+            std::cout << "Random Generator Seed: " << seed << std::endl;
+        }
+
+        //run algorithm
+        auto start_time = std::chrono::system_clock::now();
+        floyd_warshall(v, 25, seed, false);
+        auto end_time = std::chrono::system_clock::now();
+        tdiff = std::chrono::duration_cast<std::chrono::microseconds>(end_time-start_time).count();
+
+        std::cout << "Test #: " << i << ", " << v << " nodes, " << "25% density, " << std::setprecision(5) << tdiff << " \u03BCs taken. " << std::endl;
+        total_times3[0] += tdiff;
+    }
+
+    //Simulate with 50% density
+    for(int i = 0; i < sample_sizes[2]; i++)
+    {
+
+        seed = (i*i*i*i) & ((std::chrono::system_clock::now().time_since_epoch().count()));
+        if(dev_print)
+        {
+            std::cout << "------------------------------------------------------" << std::endl;
+            std::cout << "----------------------- i: " << i << " ------------------------" << std::endl;
+            std::cout << "------------------------------------------------------" << std::endl;
+            std::cout << "Random Generator Seed: " << seed << std::endl;
+        }
+
+        //run algorithm
+        auto start_time = std::chrono::system_clock::now();
+        floyd_warshall(v, 50, seed, false);
+        auto end_time = std::chrono::system_clock::now();
+        tdiff = std::chrono::duration_cast<std::chrono::microseconds>(end_time-start_time).count();
+
+        std::cout << "Test #: " << i << ", " << v << " nodes, " << "50% density, " << std::setprecision(5) << tdiff << " \u03BCs taken. " << std::endl;
+        total_times3[1] += tdiff;
+    }
+
+    //
+    //Simulate with 75% density
+    for(int i = 0; i < sample_sizes[2]; i++)
+    {
+        seed = (i*i*i*i) & ((std::chrono::system_clock::now().time_since_epoch().count()));
+        if(dev_print)
+        {
+            std::cout << "------------------------------------------------------" << std::endl;
+            std::cout << "----------------------- i: " << i << " ------------------------" << std::endl;
+            std::cout << "------------------------------------------------------" << std::endl;
+            std::cout << "Random Generator Seed: " << seed << std::endl;
+        }
+
+        //run algorithm
+        auto start_time = std::chrono::system_clock::now();
+        floyd_warshall(v, 75, seed, false);
+        auto end_time = std::chrono::system_clock::now();
+        tdiff = std::chrono::duration_cast<std::chrono::microseconds>(end_time-start_time).count();
+
+        std::cout << "Test #: " << i << ", " << v << " nodes, " << "75% density, " << std::setprecision(5) << tdiff << " \u03BCs taken. " << std::endl;
+        total_times3[2] += tdiff;
+    }
+
+    //
+    //Simulate with 100% density
+    for(int i = 0; i < sample_sizes[2]; i++)
+    {
+        seed = (i*i*i*i) & ((std::chrono::system_clock::now().time_since_epoch().count()));
+        if(dev_print)
+        {
+            std::cout << "------------------------------------------------------" << std::endl;
+            std::cout << "----------------------- i: " << i << " ------------------------" << std::endl;
+            std::cout << "------------------------------------------------------" << std::endl;
+            std::cout << "Random Generator Seed: " << seed << std::endl;
+        }
+
+        //run algorithm
+        auto start_time = std::chrono::system_clock::now();
+        floyd_warshall(v, 100, seed, false);
+        auto end_time = std::chrono::system_clock::now();
+        tdiff = std::chrono::duration_cast<std::chrono::microseconds>(end_time-start_time).count();
+
+        std::cout << "Test #: " << i << ", " << v << " nodes, " << "100% density, " << std::setprecision(5) << tdiff << " \u03BCs\t taken. " << std::endl;
+        total_times3[3] += tdiff;
+    }
+
+    /*
+    REPORT RESULTS
+    */
+
+    std::cout << "---------------------------------------------------------------------------------" << std::endl;
+    std::cout << "| Density(%)\t| 10x10\t\t| 100x100\t| 1000x1000\t|" << std::endl;
+    
+    std::cout << "---------------------------------------------------------------------------------" << std::endl;
+    for(unsigned int i = 0; i < total_times.size(); i++)
+    {
+        int d = i + 1;
+        d *= 25;
+        std::cout 
+            << "| " << d << "\t\t|" 
+            << std::setprecision(5) << total_times[i] / sample_sizes[0] << " \u03BCs\t|" 
+            << std::setprecision(5) << (total_times2[i] / sample_sizes[1]) / 1'000 << " ms\t|" 
+            << std::setprecision(5) << (total_times3[i] / sample_sizes[2]) / 1'000'000 << " s\t|"
+            << std::endl;
+    }
+    std::cout << "---------------------------------------------------------------------------------" << std::endl;
+
     delete _res;
 
     // auto end_outer = std::chrono::system_clock::now();
     // double tdiff_outer = std::chrono::duration<double>(end_outer-start_outer).count();
     // std::cout << "Total time taken for " << num_tests << " graphs: " << std::setprecision(4) << tdiff_outer << " ns" << std::endl;
 
-    std::cout << "------------------------------------------------------" << std::endl;
+    // std::cout << "------------------------------------------------------" << std::endl;
 
-    /*
-        Force Spawn Specific Matrices known to have demonstrable results
-    */
-    std::vector<unsigned long long> seeds = 
-    { 
-        62135695,
-        22382654,
-        98039086,
-        2710561,
-        6948897,
-        659456, //example seed
-        2670848
-    };
-    for(unsigned int i = 0; i < seeds.size(); i++)
-    {
+    // /*
+    //     Force Spawn Specific Matrices known to have demonstrable results
+    // */
+    // std::vector<unsigned long long> seeds = 
+    // { 
+    //     62135695,
+    //     22382654,
+    //     98039086,
+    //     2710561,
+    //     6948897,
+    //     659456, //example seed
+    //     2670848
+    // };
+    // for(unsigned int i = 0; i < seeds.size(); i++)
+    // {
         
-        std::cout << "------------------------------------------------------" << std::endl;
-        std::cout << "------------------------ i: " << i << " ------------------------" << std::endl;
-        std::cout << "------------------------------------------------------" << std::endl;
+    //     std::cout << "------------------------------------------------------" << std::endl;
+    //     std::cout << "------------------------ i: " << i << " ------------------------" << std::endl;
+    //     std::cout << "------------------------------------------------------" << std::endl;
 
-        //try to get as 'random' seed as possible
-        seed = seeds[i];
+    //     //try to get as 'random' seed as possible
+    //     seed = seeds[i];
 
-        //print seed given
-        std::cout << "Random Generator Seed: " << seed << std::endl;
+    //     //print seed given
+    //     std::cout << "Random Generator Seed: " << seed << std::endl;
 
-        //run algorithm
-        floyd_warshall(5, 25, seed, true);
-    }
+    //     //run algorithm
+    //     floyd_warshall(5, 25, seed, true);
+    // }
 
-    std::cout << "------------------------------------------------------" << std::endl;
-    std::cout << "goodbye" << std::endl;
+    // std::cout << "------------------------------------------------------" << std::endl;
 }
